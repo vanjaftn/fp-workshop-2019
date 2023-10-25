@@ -20,6 +20,16 @@ object Impure2Pure {
     table
   }
 
-  def pureReverse(table: RankingTable): RankingTable = ???
+  def pureReverse(table: RankingTable): RankingTable = {
+    var result = Seq[Participant]()
+
+    for (index <- table.participants.length - 1 to 0 by -1) {
+      result :+= table.participants(index)
+    }
+
+    val resultTable = RankingTable(result)
+
+    resultTable
+  }
 
 }
