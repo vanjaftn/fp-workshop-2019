@@ -28,6 +28,7 @@ object Immutability {
     task.title = "Functional programming"
 
     // Is the List[Task] type mutable?
+    // No, List is immutable type. Field title in Task is mutable, because it is var.
     val tasks = List[Task](task)
     tasks.foreach { task =>
       task.title = task.title.toLowerCase
@@ -36,6 +37,7 @@ object Immutability {
     tasks.foreach(println)
 
     // Is the Polygon type mutable?
+    // Yes, as ArrayBuffer is mutable
     val polygon = Polygon(ArrayBuffer(Point(5, 5), Point(10, 10)))
     polygon.arrayBuffer += Point(15, 15)
 
