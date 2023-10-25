@@ -7,11 +7,7 @@ object Drop {
     * Implementation should pass suite DropFCFSpec
     */
   def dropIf[A](elements: List[A], p: A => Boolean): List[A] = {
-      if (elements.length <= 1) {
-        elements
-      } else {
         elements.filterNot(p(_))
-      }
   }
 
 }
