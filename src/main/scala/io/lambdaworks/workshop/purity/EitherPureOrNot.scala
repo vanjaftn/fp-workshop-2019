@@ -12,10 +12,13 @@ object EitherPureOrNot {
 
   // Either pure or not?
 
+  //Pure
   def addTodo(todo: Todo): Unit = todoList :+= todo
 
+  //Not pure, doesn't always return the same value
   def currentDate: DateTime = DateTime.now
 
+  //Pure
   def evenNumbers(lowerBound: Int, upperBound: Int): Seq[Int] = {
     var result = Seq[Int]()
     for (index <- lowerBound to upperBound) {
@@ -25,6 +28,7 @@ object EitherPureOrNot {
     result
   }
 
+  //Not pure, has println
   def firstElement(todoList: List[Todo]): Todo = {
     val head = todoList.head
     println(head)
@@ -32,12 +36,14 @@ object EitherPureOrNot {
     head
   }
 
+  //Not pure, uses object which is outside of a function scope
   def fullName(firstName: String, lastName: String): String = {
     builder.append(firstName)
     builder.append(lastName)
     builder.mkString(" ")
   }
 
+  //Not pure, mutates a variable that was passed in
   def square4j(numbers: JList[Int]): JList[Int] = {
     for (index <- 0 until numbers.size()) {
       val number = numbers.get(index)
@@ -47,6 +53,7 @@ object EitherPureOrNot {
     numbers
   }
 
+  //Pure
   def square4s(numbers: Seq[Int]): Seq[Int] = {
     var result = numbers
     for (index <- numbers.indices) {
