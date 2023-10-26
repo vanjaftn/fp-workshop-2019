@@ -2,21 +2,22 @@ package io.lambdaworks.workshop.exceptions
 
 object PasswordChecker {
 
-  def validate(password: String): Either[List[Throwable], String] = {
+  def validate(password: String): Either[Seq[Throwable], String] = {
 
-    (minNumberOfChars(password, password.length), containsUpperCase(password), containsLowerCase(password), containsNumber(password))
+    val criteria = Seq(minNumberOfChars(password, password.length), containsNumber(password), containsLowerCase(password), containsUpperCase(password))
 
-    val errorList = List[Throwable]()
-
-    minNumberOfChars(password, password.length).fold(left => left +: errorList, right => password)
-    containsUpperCase(password).fold(left => left +: errorList, right => password)
-    containsLowerCase(password).fold(left => left +: errorList, right => password)
-    containsNumber(password).fold(left => left +: errorList, right => password)
-
-    if (errorList.nonEmpty) {
-      Left(errorList)
-    } else {
-      Right(password)
+    minNumberOfChars(password, password.length) match {
+      case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+      case Right(_) => containsUpperCase(password) match {
+        case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+        case Right(_) => containsLowerCase(password) match {
+          case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+          case Right(_) => containsNumber(password) match {
+            case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+            case Right(_) => Right(password)
+          }
+        }
+      }
     }
   }
 
@@ -36,14 +37,14 @@ object PasswordChecker {
 
 
   private def containsLowerCase(password: String): Either[Throwable, String] =
-    if (!password.exists(letter => letter.isUpper)) {
+    if (!password.exists(letter => letter.isLower)) {
       Left(MissingLowercase)
     } else {
       Right(password)
     }
 
   private def containsNumber(password: String): Either[Throwable, String] =
-    if (!password.exists(letter => letter.isUpper)) {
+    if (!password.exists(letter => letter.isDigit)) {
       Left(MissingNumber)
     } else {
       Right(password)
