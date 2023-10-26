@@ -2,15 +2,52 @@ package io.lambdaworks.workshop.exceptions
 
 object PasswordChecker {
 
-  def validate(password: String): Either[List[Throwable], String] = ???
+  def validate(password: String): Either[List[Throwable], String] = {
 
-  private def minNumberOfChars(password: String, length: Int): Either[Throwable, String] = ???
+    (minNumberOfChars(password, password.length), containsUpperCase(password), containsLowerCase(password), containsNumber(password))
 
-  private def containsUpperCase(password: String): Either[Throwable, String] = ???
+    val errorList = List[Throwable]()
 
-  private def containsLowerCase(password: String): Either[Throwable, String] = ???
+    minNumberOfChars(password, password.length).fold(left => left +: errorList, right => password)
+    containsUpperCase(password).fold(left => left +: errorList, right => password)
+    containsLowerCase(password).fold(left => left +: errorList, right => password)
+    containsNumber(password).fold(left => left +: errorList, right => password)
 
-  private def containsNumber(password: String): Either[Throwable, String] = ???
+    if (errorList.nonEmpty) {
+      Left(errorList)
+    } else {
+      Right(password)
+    }
+  }
+
+  private def minNumberOfChars(password: String, length: Int): Either[Throwable, String] =
+    if (length < 5) {
+    Left(InvalidLength)
+  } else {
+    Right(password)
+  }
+
+  private def containsUpperCase(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isUpper)) {
+      Left(MissingUppercase)
+    } else {
+      Right(password)
+    }
+
+
+  private def containsLowerCase(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isUpper)) {
+      Left(MissingLowercase)
+    } else {
+      Right(password)
+    }
+
+  private def containsNumber(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isUpper)) {
+      Left(MissingNumber)
+    } else {
+      Right(password)
+    }
 
   object InvalidLength    extends Throwable("Password must contain at least 5 characters.")
   object MissingUppercase extends Throwable("Password must contain uppercase letter.")
