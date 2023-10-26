@@ -2,15 +2,53 @@ package io.lambdaworks.workshop.exceptions
 
 object PasswordChecker {
 
-  def validate(password: String): Either[List[Throwable], String] = ???
+  def validate(password: String): Either[Seq[Throwable], String] = {
 
-  private def minNumberOfChars(password: String, length: Int): Either[Throwable, String] = ???
+    val criteria = Seq(minNumberOfChars(password, password.length), containsNumber(password), containsLowerCase(password), containsUpperCase(password))
 
-  private def containsUpperCase(password: String): Either[Throwable, String] = ???
+    minNumberOfChars(password, password.length) match {
+      case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+      case Right(_) => containsUpperCase(password) match {
+        case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+        case Right(_) => containsLowerCase(password) match {
+          case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+          case Right(_) => containsNumber(password) match {
+            case Left(_) => Left(criteria.collect{ case Left(ex) => ex})
+            case Right(_) => Right(password)
+          }
+        }
+      }
+    }
+  }
 
-  private def containsLowerCase(password: String): Either[Throwable, String] = ???
+  private def minNumberOfChars(password: String, length: Int): Either[Throwable, String] =
+    if (length < 5) {
+    Left(InvalidLength)
+  } else {
+    Right(password)
+  }
 
-  private def containsNumber(password: String): Either[Throwable, String] = ???
+  private def containsUpperCase(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isUpper)) {
+      Left(MissingUppercase)
+    } else {
+      Right(password)
+    }
+
+
+  private def containsLowerCase(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isLower)) {
+      Left(MissingLowercase)
+    } else {
+      Right(password)
+    }
+
+  private def containsNumber(password: String): Either[Throwable, String] =
+    if (!password.exists(letter => letter.isDigit)) {
+      Left(MissingNumber)
+    } else {
+      Right(password)
+    }
 
   object InvalidLength    extends Throwable("Password must contain at least 5 characters.")
   object MissingUppercase extends Throwable("Password must contain uppercase letter.")
