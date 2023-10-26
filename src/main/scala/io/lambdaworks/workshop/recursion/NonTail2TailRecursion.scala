@@ -19,18 +19,17 @@ object NonTail2TailRecursion {
   def cubesOfEvens(numbers: List[Double]): List[Double] = {
 
     @tailrec
-    def loop(cubedNumbers: List[Double] = List[Double]()): List[Double] = {
+    def loop(numbers: List[Double], cubedNumbers: List[Double] = List[Double]()): List[Double] = {
 
       numbers match {
-        case x :: _ if x % 2 == 0 => loop(Math.pow(x, 3) +: cubedNumbers)
-        case _ :: _ => loop(cubedNumbers)
-        case Nil     => List.empty
-        case _ => cubedNumbers
+        case x :: tail if x % 2 == 0 => loop(tail, Math.pow(x, 3) +: cubedNumbers)
+        case _ :: tail => loop(tail, cubedNumbers)
+        case Nil     => cubedNumbers
       }
 
     }
 
-    loop()
+    loop(numbers)
   }
 
 }
