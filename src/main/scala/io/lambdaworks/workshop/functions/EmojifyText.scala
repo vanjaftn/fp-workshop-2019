@@ -7,7 +7,7 @@ import scala.util.Try
 object EmojifyText {
 
   def emojify(sentence: String): String = {
-    sentence.split(" ").map(_.filter(letter => isLetter(letter))).map(word => emojiOrWord(word)).reduce(_ + _)
+    sentence.split(" ").map(_.filter(letter => isLetter(letter))).map(word => " " + emojiOrWord(word)).reduce(_ + _).substring(1)
   }
 
   private def emojiOrWord(word: String): String =
